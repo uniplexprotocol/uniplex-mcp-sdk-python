@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "uniplex-mcp-sdk"
+version = "1.1.1"
+description = "Uniplex MCP Server - Permission-aware tool execution for AI agents"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Standard Logic Co.", email = "hello@standardlogic.co" }
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "uniplex",
+    "ai-agents",
+    "permissions",
+    "passports"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "pynacl>=1.5.0",
+    "jsonpath-ng>=1.6.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "mypy>=1.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+uniplex-mcp-sdk = "uniplex_mcp.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/uniplex-ai/mcp-server-python"
+Documentation = "https://docs.uniplex.ai"
+Repository = "https://github.com/uniplex-ai/mcp-server-python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["uniplex_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+python_version = "3.10"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
