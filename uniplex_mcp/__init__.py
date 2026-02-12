@@ -27,6 +27,22 @@ from .transforms import (
     TransformError,
 )
 from .types import (
+    # Protocol SDK re-exports (§14A, §14B)
+    AnonymousAccessPolicy,
+    AnonymousDecision,
+    CELResult,
+    CONSTRAINT_KEYS,
+    ConstraintDecision,
+    ConstraintEvaluation,
+    CumulativeState,
+    CumulativeStateTracker,
+    DenialCode,
+    DenyReason,
+    evaluate_anonymous_access,
+    evaluate_constraints,
+    MemoryAnonymousRateLimiter,
+    OBLIGATION_TOKENS,
+    # MCP-specific types
     BillingPeriod,
     CachedCatalog,
     Catalog,
@@ -37,7 +53,6 @@ from .types import (
     ConsumptionAttestation,
     ConsumptionData,
     Denial,
-    DenialCode,
     DiscoveryQuery,
     DiscoveryResult,
     EffectiveConstraints,
@@ -68,7 +83,7 @@ from .verification import (
     verify_signature,
 )
 
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 __all__ = [
     # Server
@@ -103,6 +118,21 @@ __all__ = [
     "extract_pricing_constraints",
     "extract_sla_constraints",
     "extract_platform_fee_constraints",
+    # Protocol SDK re-exports (§14A, §14B)
+    "AnonymousAccessPolicy",
+    "AnonymousDecision",
+    "CELResult",
+    "CONSTRAINT_KEYS",
+    "ConstraintDecision",
+    "ConstraintEvaluation",
+    "CumulativeState",
+    "CumulativeStateTracker",
+    "DenialCode",
+    "DenyReason",
+    "evaluate_anonymous_access",
+    "evaluate_constraints",
+    "MemoryAnonymousRateLimiter",
+    "OBLIGATION_TOKENS",
     # Types
     "BillingPeriod",
     "CachedCatalog",
@@ -114,7 +144,6 @@ __all__ = [
     "ConsumptionAttestation",
     "ConsumptionData",
     "Denial",
-    "DenialCode",
     "DiscoveryQuery",
     "DiscoveryResult",
     "EffectiveConstraints",

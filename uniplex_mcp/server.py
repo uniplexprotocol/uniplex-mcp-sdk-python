@@ -16,7 +16,7 @@ from .transforms import transform_to_canonical
 from .types import (
     ConstraintConfig,
     Denial,
-    DenialCode,
+    DenyReason,
     ServerConfig,
     ToolDefinition,
     ToolUniplexMetadata,
@@ -210,6 +210,7 @@ class UniplexMCPServer:
             issuer_keys=self.cache.issuer_keys,
             rate_limiter=self.rate_limiter,
             skip_signature_verification=self.config.skip_signature_verification,
+            anonymous_policy=self.config.anonymous,
         )
         
         if not verify_result.allowed:
@@ -265,7 +266,7 @@ class UniplexMCPServer:
                     value = transform_to_canonical(value, precision, mode.value)
                 
                 # Map to context field
-                if constraint.key == "core:cost:max":
+                if constraint.key == "core:cost:max_per_action":
                     context["amount_canonical"] = value
                 else:
                     context[constraint.key] = value
@@ -303,7 +304,7 @@ class UniplexMCPServer:
     def _build_denial_response(self, result: VerifyResult) -> dict[str, Any]:
         """Build MCP error response for denial."""
         denial = result.denial or Denial(
-            code=DenialCode.INTERNAL_ERROR,
+            code=DenyReason.INTERNAL_ERROR,
             message="Unknown error",
         )
         
