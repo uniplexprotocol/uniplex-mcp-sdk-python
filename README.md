@@ -3,7 +3,7 @@
 <!-- mcp-name: io.github.uniplexprotocol/sdk -->
 
 [![PyPI version](https://img.shields.io/pypi/v/uniplex-mcp-sdk)](https://pypi.org/project/uniplex-mcp-sdk/)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-green)](https://modelcontextprotocol.io)
 
 **Protect your MCP server with Uniplex.** Add permission verification, constraint enforcement, and a cryptographic audit trail to any tool — in a few lines of code.
@@ -14,7 +14,7 @@ Every tool call is checked against the calling agent's passport. Unauthorized re
 
 ## What is Uniplex?
 
-[Uniplex](https://uniplex.io) is an open protocol that adds a lightweight trust layer for the agentic web. It has two sides:
+[Uniplex](https://uniplex.ai) is an open protocol that adds a lightweight trust layer for the agentic web. It has two sides:
 
 **Gates** protect your tools, APIs, and MCP servers. A Gate is a verification checkpoint — you define a permission catalog of what's allowed, and incoming agent requests are checked against it locally, with no network round-trip. Every decision produces a signed attestation for a tamper-evident audit trail.
 
@@ -22,7 +22,7 @@ Every tool call is checked against the calling agent's passport. Unauthorized re
 
 This SDK lets you add a Gate to your MCP server. You define tools, declare the permissions they require, and the SDK handles verification, constraint enforcement, and attestation logging automatically.
 
-→ [Protocol specification](https://github.com/uniplexprotocol/uniplex) · [Documentation](https://uniplex.io) · [Management MCP server](https://github.com/uniplexprotocol/uniplex-mcp-manage)
+→ [Protocol specification](https://github.com/uniplexprotocol/uniplex) · [Documentation](https://uniplex.ai) · [Management MCP server](https://github.com/uniplexprotocol/uniplex-mcp-manage)
 
 ---
 
@@ -31,6 +31,8 @@ This SDK lets you add a Gate to your MCP server. You define tools, declare the p
 ```bash
 pip install uniplex-mcp-sdk
 ```
+
+Requires the [`uniplex`](https://pypi.org/project/uniplex/) protocol SDK (v1.2.1+), installed automatically as a dependency.
 
 ---
 
@@ -113,7 +115,7 @@ book_flight = (
     .permission('flights:book')
     .risk_level('high')
     .constraint({
-        'key': 'core:cost:max',
+        'key': 'core:cost:max_per_action',
         'source': 'input',
         'input_path': '$.price',
         'transform': 'dollars_to_cents'
@@ -132,6 +134,51 @@ book_flight = (
 
 async def book_flight_handler(input):
     return {'confirmation': 'ABC123'}
+```
+
+### Three-Tier Decision Model
+
+Constraint evaluation produces one of three decisions:
+
+| Decision | Wire | Meaning |
+|----------|------|---------|
+| **PERMIT** | `"permit"` | All constraints satisfied — handler runs |
+| **SUSPEND** | `"deny"` | Soft denial — agent can request approval (`obligations: ["require_approval"]`) |
+| **BLOCK** | `"deny"` | Hard denial — constraint violated, no recourse |
+
+```python
+result = verify_locally(request)
+
+if result.decision == 'permit':
+    # handler runs
+elif result.constraint_decision == 'SUSPEND':
+    # soft denial — check result.obligations and result.reason_codes
+else:
+    # hard block — check result.denial
+```
+
+### CEL Constraint Evaluation
+
+Constraints are evaluated using a CEL (Common Expression Language) engine from the [`uniplex`](https://pypi.org/project/uniplex/) protocol SDK. The SDK re-exports the evaluation functions:
+
+```python
+from uniplex_mcp import evaluate_constraints, CumulativeStateTracker
+
+tracker = CumulativeStateTracker()
+result = evaluate_constraints(passport, catalog, action, context, tracker)
+# result.decision: 'PERMIT' | 'BLOCK' | 'SUSPEND'
+```
+
+### Anonymous Access
+
+Gates can define an anonymous access policy for unauthenticated requests with rate limiting:
+
+```python
+from uniplex_mcp import evaluate_anonymous_access, MemoryAnonymousRateLimiter
+
+limiter = MemoryAnonymousRateLimiter()
+decision = evaluate_anonymous_access(policy, action, client_id, limiter)
+# decision.allowed, decision.reason
 ```
 
 ### Attestation Logging
@@ -225,7 +272,7 @@ from uniplex_mcp import (
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `UNIPLEX_GATE_ID` | Yes | Your gate identifier |
-| `UNIPLEX_API_URL` | No | API URL (default: `https://api.uniplex.ai`) |
+| `UNIPLEX_API_URL` | No | API URL (default: `https://uniplex.ai`) |
 
 ### Server Options
 
@@ -292,6 +339,22 @@ server.start()                # Start stdio transport
 server.register_tool(tool)    # Add tool at runtime
 ```
 
+### `VerifyResult`
+
+The result of local passport verification:
+
+```python
+class VerifyResult:
+    allowed: bool                                   # True when decision is "permit"
+    decision: Literal['permit', 'deny']             # Wire-level decision
+    constraint_decision: ConstraintDecision | None   # 'PERMIT' | 'BLOCK' | 'SUSPEND'
+    reason_codes: list[str] | None                  # e.g., ["approval_required"]
+    obligations: list[str] | None                   # e.g., ["require_approval"]
+    denial: Denial | None                           # Denial details (code + message)
+    effective_constraints: dict | None
+    confident: bool                                 # True if cache was fresh
+```
+
 ### Financial Utilities
 
 ```python
@@ -333,15 +396,16 @@ Use `test_mode=True` in your server config to run with mock passports during dev
 ## Learn More
 
 - [Uniplex Protocol Specification](https://github.com/uniplexprotocol/uniplex)
-- [Documentation & Guides](https://uniplex.io)
-- [Management MCP Server](https://github.com/uniplexprotocol/uniplex-mcp-manage) — manage issuers, passports, and gates from Claude
-- [💬 Discussions](https://github.com/uniplexprotocol/uniplex/discussions) — Questions and ideas
-- [𝕏 @uniplexprotocol](https://x.com/uniplexprotocol) — Updates and announcements
+- [Documentation & Guides](https://uniplex.ai)
+- [Management MCP Server (TypeScript)](https://www.npmjs.com/package/uniplex-mcp-manage) · [Management SDK (Python)](https://pypi.org/project/uniplex-mcp-manage/)
+- [Protocol SDK (TypeScript)](https://www.npmjs.com/package/uniplex) · [Protocol SDK (Python)](https://pypi.org/project/uniplex/)
+- [Discussions](https://github.com/uniplexprotocol/uniplex/discussions) — Questions and ideas
+- [@uniplexprotocol](https://x.com/uniplexprotocol) — Updates and announcements
 
 ---
 
 ## License
 
-Apache 2.0 — [Standard Logic Co.](https://standardlogic.ai)
+MIT — [Standard Logic Co.](https://standardlogic.ai)
 
 Building the trust infrastructure for AI agents.
