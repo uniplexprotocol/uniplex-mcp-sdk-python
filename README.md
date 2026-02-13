@@ -3,7 +3,7 @@
 <!-- mcp-name: io.github.uniplexprotocol/sdk -->
 
 [![PyPI version](https://img.shields.io/pypi/v/uniplex-mcp-sdk)](https://pypi.org/project/uniplex-mcp-sdk/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-green)](https://modelcontextprotocol.io)
 
 **Protect your MCP server with Uniplex.** Add permission verification, constraint enforcement, and a cryptographic audit trail to any tool — in a few lines of code.
@@ -14,7 +14,7 @@ Every tool call is checked against the calling agent's passport. Unauthorized re
 
 ## What is Uniplex?
 
-[Uniplex](https://uniplex.ai) is an open protocol that adds a lightweight trust layer for the agentic web. It has two sides:
+[Uniplex](https://uniplex.io) is an open protocol that adds a lightweight trust layer for the agentic web. It has two sides:
 
 **Gates** protect your tools, APIs, and MCP servers. A Gate is a verification checkpoint — you define a permission catalog of what's allowed, and incoming agent requests are checked against it locally, with no network round-trip. Every decision produces a signed attestation for a tamper-evident audit trail.
 
@@ -22,7 +22,7 @@ Every tool call is checked against the calling agent's passport. Unauthorized re
 
 This SDK lets you add a Gate to your MCP server. You define tools, declare the permissions they require, and the SDK handles verification, constraint enforcement, and attestation logging automatically.
 
-→ [Protocol specification](https://github.com/uniplexprotocol/uniplex) · [Documentation](https://uniplex.ai) · [Management MCP server](https://github.com/uniplexprotocol/uniplex-mcp-manage)
+→ [Protocol specification](https://github.com/uniplexprotocol/uniplex) · [Documentation](https://uniplex.io) · [Management MCP server](https://github.com/uniplexprotocol/uniplex-mcp-manage)
 
 ---
 
@@ -396,7 +396,7 @@ Use `test_mode=True` in your server config to run with mock passports during dev
 ## Learn More
 
 - [Uniplex Protocol Specification](https://github.com/uniplexprotocol/uniplex)
-- [Documentation & Guides](https://uniplex.ai)
+- [Documentation & Guides](https://uniplex.io)
 - [Management MCP Server (TypeScript)](https://www.npmjs.com/package/uniplex-mcp-manage) · [Management SDK (Python)](https://pypi.org/project/uniplex-mcp-manage/)
 - [Protocol SDK (TypeScript)](https://www.npmjs.com/package/uniplex) · [Protocol SDK (Python)](https://pypi.org/project/uniplex/)
 - [Discussions](https://github.com/uniplexprotocol/uniplex/discussions) — Questions and ideas
@@ -406,6 +406,6 @@ Use `test_mode=True` in your server config to run with mock passports during dev
 
 ## License
 
-MIT — [Standard Logic Co.](https://standardlogic.ai)
+Apache 2.0 — [Standard Logic Co.](https://standardlogic.ai)
 
 Building the trust infrastructure for AI agents.
